@@ -28,6 +28,9 @@ export class Player extends Component {
     @property(Animation)
     Button_Animation: Animation = null // 按钮动画节点
 
+    @property(Animation)
+    NextLevel_Button: Animation = null  // “下一关”按钮节点
+
     @property(AudioClip)
     Win_AudioClip: AudioClip = null // 成功音频
 
@@ -45,6 +48,7 @@ export class Player extends Component {
     now_Label = 0  // 当前射入箭数s
 
     Up_Sw = true
+
 
     protected onLoad(): void {
         input.on(Input.EventType.TOUCH_START, this.TOUCH_START, this)
@@ -92,12 +96,36 @@ export class Player extends Component {
         this.Move = false  // 关闭旋转
         input.off(Input.EventType.TOUCH_START, this.TOUCH_START, this) // 关闭发射
         this.Tips_Node.active = true
-        this.Button_Animation.play('animation') // 播放animation动画
+
         if (!param) {
             this.Tips_Label.string = "你失败了"
+
+            // 显示“重新开始”按钮，隐藏“下一关”按钮
+            if (this.Button_Animation && this.Button_Animation.node) {
+                this.Button_Animation.node.active = true
+                this.Button_Animation.play('animation') // 播放animation动画
+            }
+            if (this.NextLevel_Button) {
+                this.NextLevel_Button.node.active = false
+            }
+
         } else {
             this.Tips_Label.string = "你成功了"
+            // 隐藏“重新开始”按钮，显示“下一关”按钮
+            if (this.Button_Animation && this.Button_Animation.node) {
+                this.Button_Animation.node.active = false
+            }
+            if (this.NextLevel_Button) {
+                this.NextLevel_Button.node.active = true
+                this.NextLevel_Button.play('animation_next') // 播放animation_next动画
+            }
         }
+    }
+
+    // 下一关按钮点击函数
+    Next_Level() {
+        // TODO：后续可以改成加载下一关场景/修改关卡参数
+        director.loadScene('scene');
     }
 
     New_Game() {
